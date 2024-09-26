@@ -67,7 +67,7 @@ int main() {
 		return 1;
 	}
 
-	Shader thisShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+	shaderJail::Shader thisShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 
 	//Initialization goes here!
 	//Vertex array object
@@ -105,8 +105,10 @@ int main() {
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
-		glUniform1f(glGetUniformLocation(shaderProgram, "uTime"), time);
+		thisShader.use();
+		//glUseProgram(shaderProgram);
+		thisShader.setFloat("uTime", time);
+		//glUniform1f(glGetUniformLocation(shaderProgram, "uTime"), time);
 
 		glBindVertexArray(VAO);
 

@@ -8,7 +8,7 @@
 
 namespace shaderJail {
 	class Shader {
-		unsigned int ID;
+	public: 
 
 		Shader(const char* vertexPath, const char* fragmentPath);
 
@@ -17,5 +17,8 @@ namespace shaderJail {
 		void setBool(const std::string& name, bool value) const;
 		void setInt(const std::string& name, int value) const;
 		void setFloat(const std::string& name, float value) const;
+
+	private:
+		unsigned int ID;
 	};
 }
