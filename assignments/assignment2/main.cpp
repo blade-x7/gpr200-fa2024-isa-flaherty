@@ -10,13 +10,28 @@
 const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
 
+
+/*
 float vertices[] = {
 	// X     Y     Z     R     G     B     A
 	-0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
 	 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 	 0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f
+};*/
+
+float vertices[] = {
+	// X     Y     Z     U     V
+	-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, //vertex 0
+	 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, //vertex 1
+	 1.0f,  1.0f, 0.0f, 1.0f, 1.0f, //vertex 2
+	-1.0f,  1.0f, 0.0f, 0.0f, 1.0f  //vertex 3
+};
+unsigned int indices[] = {
+	0, 1, 2,
+	2, 3, 0
 };
 
+/*
 const char* vertexShaderSource = R"(
 #version 330 core
 layout (location = 0) in vec3 aPos;
@@ -32,9 +47,9 @@ void main()
    vec3 pos = aPos;
    pos.y += (sin(uTime * uSpeed + pos.x) * 0.25f);
    gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
-})";
+})";*/
 
-
+/*
 const char* fragmentShaderSource = R"(
 #version 330 core
 out vec4 FragColor;
@@ -43,9 +58,9 @@ uniform float uTime;
 
 void main()
 {
-    FragColor = Color * abs(tan(uTime));
-} 
-)";
+	FragColor = Color * abs(tan(uTime));
+}
+)";*/
 
 int main() {
 	printf("Initializing...");
@@ -63,12 +78,15 @@ int main() {
 		printf("GLAD Failed to load GL headers");
 		return 1;
 	}
+
+	shaderJail::Shader thisShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+
 	//Initialization goes here!
 	//Vertex array object
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
-	
+
 	//create vertex buffer object
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
@@ -77,48 +95,20 @@ int main() {
 	//put data into the currently bound VBO
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+	//Element buffer object
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
 	//Position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	//Color
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
+	//UV
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	//shader shenanigans
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	int  success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n%s", infoLog);
-	}
-
-	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		printf("ERROR:SHADER::FRAGMENT::COMPILATION_FAILED\n%s", infoLog);
-	}
-
-	unsigned int shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		printf("ERROR:SHADER::PROGRAM::LINKING_FAILED\n%s", infoLog);
-	}
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
 
 
 	//Render loop
@@ -133,13 +123,16 @@ int main() {
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
-		glUniform1f(glGetUniformLocation(shaderProgram, "uTime"), time);
+		thisShader.use();
+		//glUseProgram(shaderProgram);
+		thisShader.setFloat("uTime", time);
+		//glUniform1f(glGetUniformLocation(shaderProgram, "uTime"), time);
 
 		glBindVertexArray(VAO);
 
 		//Draw call
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		//Drawing happens here!
 		glfwSwapBuffers(window);
