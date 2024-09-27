@@ -7,6 +7,8 @@
 #include <glm/glm.hpp>
 #include <shaderJail/shader.hpp>
 
+#include <ew/external/stb_image.h>
+
 const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
 
@@ -80,6 +82,7 @@ int main() {
 	}
 
 	shaderJail::Shader thisShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+	shaderJail::Shader charShader("assets/character.vert", "assets/character.frag");
 
 	//Initialization goes here!
 	//Vertex array object
@@ -111,6 +114,7 @@ int main() {
 
 	//block of code here?
 
+
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -138,4 +142,29 @@ int main() {
 		glfwSwapBuffers(window);
 	}
 	printf("Shutting down...");
+}
+
+unsigned int loadTexture2D(const char* filePath, int filterMode, int wrapMode) {
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	// set the texture wrapping/filtering options (on the currently bound texture object)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, filterMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, filterMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, wrapMode);
+	// load and generate the texture
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load(filePath, &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+	return texture;
 }
