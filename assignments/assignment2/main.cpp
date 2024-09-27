@@ -12,6 +12,8 @@
 const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
 
+unsigned int loadTexture2D(const char* filePath, int filterMode, int wrapMode);
+
 
 /*
 float vertices[] = {
@@ -113,7 +115,7 @@ int main() {
 	glEnableVertexAttribArray(1);
 
 	//block of code here?
-
+	unsigned int tileTexture = loadTexture2D("assets/tiles.png", GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR);
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -124,14 +126,17 @@ int main() {
 
 		//Draw
 		//Clear framebuffer
-		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		//glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		//glClear(GL_COLOR_BUFFER_BIT);
 
+
+		glBindTexture(GL_TEXTURE_2D, tileTexture);
 		thisShader.use();
 		//glUseProgram(shaderProgram);
-		thisShader.setFloat("uTime", time);
+		//thisShader.setFloat("uTime", time);
 		//glUniform1f(glGetUniformLocation(shaderProgram, "uTime"), time);
 
+		glActiveTexture(GL_TEXTURE0);
 		glBindVertexArray(VAO);
 
 		//Draw call
@@ -152,13 +157,18 @@ unsigned int loadTexture2D(const char* filePath, int filterMode, int wrapMode) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, filterMode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, filterMode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, wrapMode);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	// load and generate the texture
 	int width, height, nrChannels;
 	unsigned char* data = stbi_load(filePath, &width, &height, &nrChannels, 0);
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		if (nrChannels == 3) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		}
+		else {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		}
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
