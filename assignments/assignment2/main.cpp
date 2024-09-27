@@ -109,7 +109,7 @@ int main() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-
+	//block of code here?
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {

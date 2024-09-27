@@ -5,7 +5,11 @@ uniform float uTime;
 
 void main()
 {
-    FragColor =vec4(TexCoord, 0.0, 1.0);
+    vec2 uv = TexCoord;
+    uv *= 4.0f;
+    uv.x += uTime;
+    uv = fract(uv);
+    FragColor =vec4(uv, 0.0, 1.0);
 
     //Color * abs(tan(uTime));
 }
