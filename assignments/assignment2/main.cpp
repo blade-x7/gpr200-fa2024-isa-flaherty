@@ -133,7 +133,7 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, tileTexture);
 		thisShader.use();
 		//glUseProgram(shaderProgram);
-		//thisShader.setFloat("uTime", time);
+		thisShader.setFloat("uTime", time);
 		//glUniform1f(glGetUniformLocation(shaderProgram, "uTime"), time);
 
 		glActiveTexture(GL_TEXTURE0);
