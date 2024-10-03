@@ -106,4 +106,8 @@ namespace shaderJail {
         glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
     }
 
+    unsigned int Shader::getID() {
+        return ID;
+    }
+
 }

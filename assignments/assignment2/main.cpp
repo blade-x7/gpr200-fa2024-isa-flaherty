@@ -116,6 +116,9 @@ int main() {
 
 	//block of code here?
 	unsigned int tileTexture = loadTexture2D("assets/tiles.png", GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR);
+	
+	unsigned int loss = loadTexture2D("assets/loss.png", GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR);
+
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -129,14 +132,22 @@ int main() {
 		//glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		//glClear(GL_COLOR_BUFFER_BIT);
 
-
-		glBindTexture(GL_TEXTURE_2D, tileTexture);
-		thisShader.use();
-		//glUseProgram(shaderProgram);
-		thisShader.setFloat("uTime", time);
-		//glUniform1f(glGetUniformLocation(shaderProgram, "uTime"), time);
+		glUniform1i(glGetUniformLocation(thisShader.getID(), "tileTexture"), 0);
+		glUniform1i(glGetUniformLocation(thisShader.getID(), "loss"), 1);
 
 		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, tileTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, loss);
+
+
+		thisShader.use(); 
+		//glUseProgram(shaderProgram);
+		thisShader.setFloat("uTime", time);
+
+		
+		//glUniform1f(glGetUniformLocation(shaderProgram, "uTime"), time);
+
 		glBindVertexArray(VAO);
 
 		//Draw call
@@ -173,7 +184,7 @@ unsigned int loadTexture2D(const char* filePath, int filterMode, int wrapMode) {
 	}
 	else
 	{
-		std::cout << "Failed to load texture" << std::endl;
+		std::cout << "Failed to load texture" << stbi_failure_reason() << std::endl;
 	}
 	stbi_image_free(data);
 	return texture;
