@@ -9,10 +9,11 @@
 
 #include <ew/external/stb_image.h>
 
+#include <shaderJail/texture.h>
+
 const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
 
-unsigned int loadTexture2D(const char* filePath, int filterMode, int wrapMode);
 
 
 /*
@@ -35,36 +36,6 @@ unsigned int indices[] = {
 	2, 3, 0
 };
 
-/*
-const char* vertexShaderSource = R"(
-#version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec4 aColor;
-out vec4 Color; //Varying
-
-uniform float uTime;
-uniform float uSpeed = 3.0f;
-
-void main()
-{
-   Color = aColor; //Pass-through
-   vec3 pos = aPos;
-   pos.y += (sin(uTime * uSpeed + pos.x) * 0.25f);
-   gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
-})";*/
-
-/*
-const char* fragmentShaderSource = R"(
-#version 330 core
-out vec4 FragColor;
-in vec4 Color;
-uniform float uTime;
-
-void main()
-{
-	FragColor = Color * abs(tan(uTime));
-}
-)";*/
 
 int main() {
 	printf("Initializing...");
@@ -115,10 +86,14 @@ int main() {
 	glEnableVertexAttribArray(1);
 
 	//block of code here?
-	unsigned int tileTexture = loadTexture2D("assets/tiles.png", GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR);
+	unsigned int tileTexture = shaderJail::loadTexture2D("assets/tiles.png", GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR);
 	
-	unsigned int loss = loadTexture2D("assets/loss.png", GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR);
+	unsigned int loss = shaderJail::loadTexture2D("assets/loss.png", GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR);
 
+	unsigned int amongusTex = shaderJail::loadTexture2D("assets/amongus.png", GL_CLAMP_TO_EDGE, GL_NEAREST);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //if amongus alpha is zero, is sets the alpha to transparent
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -131,9 +106,10 @@ int main() {
 		//Clear framebuffer
 		//glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		//glClear(GL_COLOR_BUFFER_BIT);
+		thisShader.use();
 
-		glUniform1i(glGetUniformLocation(thisShader.getID(), "tileTexture"), 0);
-		glUniform1i(glGetUniformLocation(thisShader.getID(), "loss"), 1);
+		glUniform1i(glGetUniformLocation(thisShader.getID(), "texture1"), 0);
+		glUniform1i(glGetUniformLocation(thisShader.getID(), "texture2"), 1);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, tileTexture);
@@ -141,7 +117,6 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, loss);
 
 
-		thisShader.use(); 
 		//glUseProgram(shaderProgram);
 		thisShader.setFloat("uTime", time);
 
@@ -154,21 +129,30 @@ int main() {
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+		//draw amongus
+		charShader.use();
+		charShader.setFloat("uTime", time);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, amongusTex);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
 		//Drawing happens here!
 		glfwSwapBuffers(window);
 	}
 	printf("Shutting down...");
 }
 
-unsigned int loadTexture2D(const char* filePath, int filterMode, int wrapMode) {
+unsigned int loadTexture2D(const char* filePath, int wrapMode, int filterMode) {
+	stbi_set_flip_vertically_on_load(true);
 	unsigned int texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, filterMode);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, filterMode);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, wrapMode);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMode);
 	// load and generate the texture
 	int width, height, nrChannels;
 	unsigned char* data = stbi_load(filePath, &width, &height, &nrChannels, 0);

@@ -9,13 +9,14 @@ uniform sampler2D texture2;
 
 void main()
 {
-    /*
+    
     vec2 uv = TexCoord;
     uv *= 4.0f;
     uv.x += uTime;
-    uv = fract(uv); */
+    uv = fract(uv);
 
-    FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);
+    vec4 lossCol = texture(texture2, uv);
+    FragColor = mix(texture(texture1, uv), texture(texture2, uv), lossCol.a);
 
     //Color * abs(tan(uTime));
 }

@@ -11,6 +11,7 @@ void main()
 {
    TexCoord = aTexCoord; //Pass-through
    vec3 pos = aPos;
-   //pos.y += (sin(uTime * uSpeed + pos.x) * 0.25f);
+   pos /= 2.0;
+   pos.y += (sin(uTime * uSpeed) * 0.25f);
    gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
 }
