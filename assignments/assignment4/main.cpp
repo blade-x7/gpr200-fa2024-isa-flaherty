@@ -5,6 +5,8 @@
 #include <ew/ewMath/ewMath.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <shaderJail/shader.hpp>
 
 #include <ew/external/stb_image.h>
@@ -22,7 +24,7 @@ float vertices[] = {
 	-0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
 	 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 	 0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f
-};*/
+};
 
 float vertices[] = {
 	// X     Y     Z     U     V
@@ -30,10 +32,105 @@ float vertices[] = {
 	 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, //vertex 1
 	 1.0f,  1.0f, 0.0f, 1.0f, 1.0f, //vertex 2
 	-1.0f,  1.0f, 0.0f, 0.0f, 1.0f  //vertex 3
+};*/
+
+float vertices[] = {
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
+
 unsigned int indices[] = {
 	0, 1, 2,
 	2, 3, 0
+};
+
+glm::vec3 cubePositions[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f),
+
+	glm::vec3(4.0f,  0.0f,  -1.0f),
+	glm::vec3(2.0f,  4.0f, -10.0f),
+	glm::vec3(-1.0f, -3.7f, -2.0f),
+	glm::vec3(-3.0f, 2.0f, -13.3f),
+	glm::vec3(1.7f, -0.0f, -3.5f),
+	glm::vec3(-1.7f,  4.0f, -5.5f),
+	glm::vec3(0.9f, -2.5f, -4.5f),
+	glm::vec3(2.1f,  1.4f, -6.3f),
+	glm::vec3(1.5f,  1.7f, -3.0f),
+	glm::vec3(-3.3f,  0.6f, -2.5f)
+};
+
+glm::vec3 cubeScales[]{
+	glm::vec3(1.0f, 1.0f, 1.0f),
+	glm::vec3(0.5f, 0.5f, 0.5f),
+	glm::vec3(0.75f, 0.75f, 0.75f),
+	glm::vec3(1.5f, 1.5f, 1.5f),
+	glm::vec3(1.25f, 1.25f, 1.25f),
+
+	glm::vec3(1.0f, 1.0f, 1.0f),
+	glm::vec3(0.5f, 0.5f, 0.5f),
+	glm::vec3(0.75f, 0.75f, 0.75f),
+	glm::vec3(1.5f, 1.5f, 1.5f),
+	glm::vec3(1.25f, 1.25f, 1.25f),
+
+	glm::vec3(1.0f, 1.0f, 1.0f),
+	glm::vec3(0.5f, 0.5f, 0.5f),
+	glm::vec3(0.75f, 0.75f, 0.75f),
+	glm::vec3(1.5f, 1.5f, 1.5f),
+	glm::vec3(1.25f, 1.25f, 1.25f),
+
+	glm::vec3(1.0f, 1.0f, 1.0f),
+	glm::vec3(0.5f, 0.5f, 0.5f),
+	glm::vec3(0.75f, 0.75f, 0.75f),
+	glm::vec3(1.5f, 1.5f, 1.5f),
+	glm::vec3(1.25f, 1.25f, 1.25f)
 };
 
 
@@ -55,7 +152,6 @@ int main() {
 	}
 
 	shaderJail::Shader thisShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
-	shaderJail::Shader charShader("assets/character.vert", "assets/character.frag");
 
 	//Initialization goes here!
 	//Vertex array object
@@ -90,10 +186,10 @@ int main() {
 	
 	unsigned int loss = shaderJail::loadTexture2D("assets/loss.png", GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR);
 
-	unsigned int amongusTex = shaderJail::loadTexture2D("assets/amongus.png", GL_CLAMP_TO_EDGE, GL_NEAREST);
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //if amongus alpha is zero, is sets the alpha to transparent
+
+	glEnable(GL_DEPTH_TEST);
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -104,9 +200,24 @@ int main() {
 
 		//Draw
 		//Clear framebuffer
-		//glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		//glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		thisShader.use();
+
+		//model = glm::rotate(model, 0.001f * glm::radians(30.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+
+
+		glm::mat4 view = glm::mat4(1.0f);
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+		glm::mat4 projection;
+		projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+
+		int viewLoc = glGetUniformLocation(thisShader.getID(), "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+		int projLoc = glGetUniformLocation(thisShader.getID(), "projection");
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		glUniform1i(glGetUniformLocation(thisShader.getID(), "texture1"), 0);
 		glUniform1i(glGetUniformLocation(thisShader.getID(), "texture2"), 1);
@@ -125,16 +236,30 @@ int main() {
 
 		glBindVertexArray(VAO);
 
+		for (unsigned int i = 0; i < 20; i++) {
+
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			model = glm::scale(model, cubeScales[i]);
+			int modelLoc = glGetUniformLocation(thisShader.getID(), "model");
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
 		//Draw call
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		//draw amongus
+		/*
 		charShader.use();
 		charShader.setFloat("uTime", time);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, amongusTex);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); */
 
 
 		//Drawing happens here!

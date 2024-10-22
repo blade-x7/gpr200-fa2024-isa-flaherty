@@ -11,9 +11,9 @@ void main()
 {
     
     vec2 uv = TexCoord;
-    uv *= 4.0f;
-    uv.x += uTime;
-    uv = fract(uv);
+    //uv *= 4.0f;
+    //uv.x += uTime;
+    //uv = fract(uv);
 
     vec4 lossCol = texture(texture2, uv);
     FragColor = mix(texture(texture1, uv), texture(texture2, uv), lossCol.a);
