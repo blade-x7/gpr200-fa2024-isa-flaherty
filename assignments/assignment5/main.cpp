@@ -13,6 +13,10 @@
 
 #include <shaderJail/texture.h>
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -222,6 +226,12 @@ int main() {
 	shaderJail::Shader thisShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 
 	//Initialization goes here!
+	// IMGUI stuff
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init();
+	
 	//Vertex array object
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
@@ -282,7 +292,7 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		thisShader.use();
 
-		//model = glm::rotate(model, 0.001f * glm::radians(30.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+		
 
 
 		glm::mat4 view = glm::mat4(1.0f);
@@ -315,6 +325,7 @@ int main() {
 		thisShader.setFloat("uTime", time);
 		thisShader.setVec3("lightPos", lightPos);
 		thisShader.setVec3("lightColor", lightColor);
+		thisShader.setVec3("viewPos", cameraPos);
 
 		
 		//glUniform1f(glGetUniformLocation(shaderProgram, "uTime"), time);
@@ -333,6 +344,17 @@ int main() {
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+		ImGui_ImplGlfw_NewFrame();
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui::NewFrame();
+
+		ImGui::Begin("Settings");
+		ImGui::DragFloat3("Light Position", &lightPos.x, 0.1f);
+		ImGui::ColorEdit3("Light Color", &lightColor.r);
+		ImGui::End(); 
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		//Draw call
 		//glDrawArrays(GL_TRIANGLES, 0, 36);
