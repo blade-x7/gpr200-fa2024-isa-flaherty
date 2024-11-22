@@ -12,6 +12,8 @@
 #include <ew/external/stb_image.h>
 
 #include <shaderJail/texture.h>
+#include <ew/mesh.h>
+#include <ew/procGen.h>
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -232,6 +234,11 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
 	
+	//plane initialization
+	ew::MeshData waterMeshData;
+	ew::createPlaneXY(10.0f, 10.0f, 5, &waterMeshData);
+	ew::Mesh waterMesh = ew::Mesh(waterMeshData);
+
 	//Vertex array object
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
