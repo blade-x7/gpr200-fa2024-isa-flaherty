@@ -43,6 +43,9 @@ float fov = 60.0f;
 float deltaTime = 0.0f;	
 float lastFrame = 0.0f;
 
+bool wireFrame = false;
+bool pointRender = false;
+
 /*
 float vertices[] = {
 	// X     Y     Z     R     G     B     A
@@ -310,6 +313,8 @@ int main() {
 		float camZ = cos(glfwGetTime()) * radius;
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
+		ew::DrawMode drawMode = pointRender ? ew::DrawMode::POINTS : ew::DrawMode::TRIANGLES;
+
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 
@@ -334,6 +339,11 @@ int main() {
 		thisShader.setVec3("lightColor", lightColor);
 		thisShader.setVec3("viewPos", cameraPos);
 
+		glm::mat4 planeTransform = glm::mat4(1);
+		planeTransform = glm::rotate(planeTransform, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		planeTransform = glm::translate(planeTransform, glm::vec3(-5.0, -5.0, 0.0));
+		//thisShader.setMat4("model", planeTransform);
+		waterMesh.draw(drawMode);
 		
 		//glUniform1f(glGetUniformLocation(shaderProgram, "uTime"), time);
 
