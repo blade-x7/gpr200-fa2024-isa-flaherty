@@ -229,6 +229,7 @@ int main() {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	shaderJail::Shader thisShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+	shaderJail::Shader waterShader("assets/waterVertex.vert", "assets/waterFragment.frag");
 
 	//Initialization goes here!
 	// IMGUI stuff
@@ -300,7 +301,6 @@ int main() {
 		//Clear framebuffer
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		thisShader.use();
 
 		
 
@@ -318,49 +318,27 @@ int main() {
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 
-		int viewLoc = glGetUniformLocation(thisShader.getID(), "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		//water shader stuff
+		waterShader.use();
 
-		int projLoc = glGetUniformLocation(thisShader.getID(), "projection");
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		int viewLocWater = glGetUniformLocation(waterShader.getID(), "view");
+		glUniformMatrix4fv(viewLocWater, 1, GL_FALSE, glm::value_ptr(view));
 
-		glUniform1i(glGetUniformLocation(thisShader.getID(), "texture1"), 0);
-		glUniform1i(glGetUniformLocation(thisShader.getID(), "texture2"), 1);
+		int projLocWater = glGetUniformLocation(waterShader.getID(), "projection");
+		glUniformMatrix4fv(projLocWater, 1, GL_FALSE, glm::value_ptr(projection));
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, tileTexture);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, loss);
-
-
-		//glUseProgram(shaderProgram);
-		thisShader.setFloat("uTime", time);
-		thisShader.setVec3("lightPos", lightPos);
-		thisShader.setVec3("lightColor", lightColor);
-		thisShader.setVec3("viewPos", cameraPos);
+		waterShader.setFloat("uTime", time);
+		waterShader.setVec3("lightPos", lightPos);
+		waterShader.setVec3("lightColor", lightColor);
+		waterShader.setVec3("viewPos", cameraPos);
 
 		glm::mat4 planeTransform = glm::mat4(1);
 		planeTransform = glm::rotate(planeTransform, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		planeTransform = glm::translate(planeTransform, glm::vec3(-5.0, -5.0, 0.0));
-		//thisShader.setMat4("model", planeTransform);
+		waterShader.setMat4("model", planeTransform);
 		waterMesh.draw(drawMode);
 		
-		//glUniform1f(glGetUniformLocation(shaderProgram, "uTime"), time);
-
-		glBindVertexArray(VAO);
-
-		for (unsigned int i = 0; i < 20; i++) {
-
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			model = glm::scale(model, cubeScales[i]);
-			int modelLoc = glGetUniformLocation(thisShader.getID(), "model");
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		
 		ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui::NewFrame();
@@ -368,25 +346,14 @@ int main() {
 		ImGui::Begin("Settings");
 		ImGui::DragFloat3("Light Position", &lightPos.x, 0.1f);
 		ImGui::ColorEdit3("Light Color", &lightColor.r);
+		if (ImGui::Checkbox("Wireframe", &wireFrame)) {
+			glPolygonMode(GL_FRONT_AND_BACK, wireFrame ? GL_LINE : GL_FILL);
+		}
 		ImGui::End(); 
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		//Draw call
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-		//draw amongus
-		/*
-		charShader.use();
-		charShader.setFloat("uTime", time);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, amongusTex);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); */
-
-
-		//Drawing happens here!
 		glfwSwapBuffers(window);
 	}
 	printf("Shutting down...");

@@ -110,9 +110,9 @@ namespace shaderJail {
         glUniform3f(glGetUniformLocation(ID, name.c_str()), value.x, value.y, value.z);
     }
 
-    void Shader::setMat4(const std::string& name, const glm::mat4& value) const 
+    void Shader::setMat4(const char* name, const glm::mat4& m) const
     {
-
+        glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, &m[0][0]);
     }
 
     unsigned int Shader::getID() {
