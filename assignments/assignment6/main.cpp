@@ -26,7 +26,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -45,66 +45,6 @@ float lastFrame = 0.0f;
 
 bool wireFrame = false;
 bool pointRender = false;
-
-/*
-float vertices[] = {
-	// X     Y     Z     R     G     B     A
-	-0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-	 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-	 0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f
-};
-
-float vertices[] = {
-	// X     Y     Z     U     V
-	-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, //vertex 0
-	 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, //vertex 1
-	 1.0f,  1.0f, 0.0f, 1.0f, 1.0f, //vertex 2
-	-1.0f,  1.0f, 0.0f, 0.0f, 1.0f  //vertex 3
-};*/
-
-/*float vertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-};*/
 
 float vertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
@@ -155,57 +95,6 @@ unsigned int indices[] = {
 	2, 3, 0
 };
 
-glm::vec3 cubePositions[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
-	glm::vec3(-1.5f, -2.2f, -2.5f),
-	glm::vec3(-3.8f, -2.0f, -12.3f),
-	glm::vec3(2.4f, -0.4f, -3.5f),
-	glm::vec3(-1.7f,  3.0f, -7.5f),
-	glm::vec3(1.3f, -2.0f, -2.5f),
-	glm::vec3(1.5f,  2.0f, -2.5f),
-	glm::vec3(1.5f,  0.2f, -1.5f),
-	glm::vec3(-1.3f,  1.0f, -1.5f),
-
-	glm::vec3(4.0f,  0.0f,  -1.0f),
-	glm::vec3(2.0f,  4.0f, -10.0f),
-	glm::vec3(-1.0f, -3.7f, -2.0f),
-	glm::vec3(-3.0f, 2.0f, -13.3f),
-	glm::vec3(1.7f, -0.0f, -3.5f),
-	glm::vec3(-1.7f,  4.0f, -5.5f),
-	glm::vec3(0.9f, -2.5f, -4.5f),
-	glm::vec3(2.1f,  1.4f, -6.3f),
-	glm::vec3(1.5f,  1.7f, -3.0f),
-	glm::vec3(-3.3f,  0.6f, -2.5f)
-};
-
-glm::vec3 cubeScales[]{
-	glm::vec3(1.0f, 1.0f, 1.0f),
-	glm::vec3(0.5f, 0.5f, 0.5f),
-	glm::vec3(0.75f, 0.75f, 0.75f),
-	glm::vec3(1.5f, 1.5f, 1.5f),
-	glm::vec3(1.25f, 1.25f, 1.25f),
-
-	glm::vec3(1.0f, 1.0f, 1.0f),
-	glm::vec3(0.5f, 0.5f, 0.5f),
-	glm::vec3(0.75f, 0.75f, 0.75f),
-	glm::vec3(1.5f, 1.5f, 1.5f),
-	glm::vec3(1.25f, 1.25f, 1.25f),
-
-	glm::vec3(1.0f, 1.0f, 1.0f),
-	glm::vec3(0.5f, 0.5f, 0.5f),
-	glm::vec3(0.75f, 0.75f, 0.75f),
-	glm::vec3(1.5f, 1.5f, 1.5f),
-	glm::vec3(1.25f, 1.25f, 1.25f),
-
-	glm::vec3(1.0f, 1.0f, 1.0f),
-	glm::vec3(0.5f, 0.5f, 0.5f),
-	glm::vec3(0.75f, 0.75f, 0.75f),
-	glm::vec3(1.5f, 1.5f, 1.5f),
-	glm::vec3(1.25f, 1.25f, 1.25f)
-};
-
-
 int main() {
 	printf("Initializing...");
 	if (!glfwInit()) {
@@ -240,7 +129,7 @@ int main() {
 	
 	//plane initialization
 	ew::MeshData waterMeshData;
-	ew::createPlaneXY(10.0f, 10.0f, 5, &waterMeshData);
+	ew::createPlaneXY(10.0f, 10.0f, 11, &waterMeshData);
 	ew::Mesh waterMesh = ew::Mesh(waterMeshData);
 
 	//Vertex array object
@@ -327,10 +216,10 @@ int main() {
 		int projLocWater = glGetUniformLocation(waterShader.getID(), "projection");
 		glUniformMatrix4fv(projLocWater, 1, GL_FALSE, glm::value_ptr(projection));
 
-		waterShader.setFloat("uTime", time);
 		waterShader.setVec3("lightPos", lightPos);
 		waterShader.setVec3("lightColor", lightColor);
 		waterShader.setVec3("viewPos", cameraPos);
+		waterShader.setFloat("time", time);
 
 		glm::mat4 planeTransform = glm::mat4(1);
 		planeTransform = glm::rotate(planeTransform, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));

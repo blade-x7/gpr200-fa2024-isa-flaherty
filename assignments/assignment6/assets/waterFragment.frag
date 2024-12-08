@@ -4,7 +4,6 @@ out vec4 FragColor;
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
-uniform float uTime;
 uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 viewPos;
@@ -40,6 +39,4 @@ void main()
 
     vec3 result = (ambient + diffuse + specular) * objectColor;
     FragColor = vec4(result, 1.0);
-
-    //Color * abs(tan(uTime));
 }
